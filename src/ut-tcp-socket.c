@@ -138,7 +138,11 @@ static void ut_tcp_socket_read(UtObject *object, UtObject *callback_object,
 
 static void ut_tcp_socket_close(UtObject *object) {
   UtTcpSocket *self = (UtTcpSocket *)object;
-  ut_event_loop_cancel_watch(self->read_watch);
+  if (self->read_watch != NULL) {
+    ut_event_loop_cancel_watch(self->read_watch);
+  } else {
+    ut_file_descriptor_close(self->fd);
+  }
 }
 
 static UtInputStreamInterface input_stream_interface = {

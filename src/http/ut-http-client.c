@@ -102,13 +102,6 @@ static void ut_request_unref(UtObject *req_object) {
   ut_object_unref(req_object);
 }
 
-static void ut_check_requests_for_unref(UtObject *object) {
-  HttpRequest *request = (HttpRequest *)object;
-  if (!ut_http_message_decoder_get_done(request->message_decoder))
-    return;
-  ut_request_unref(object);
-}
-
 static size_t read_cb(UtObject *object, UtObject *data, bool complete) {
   HttpRequest *request = (HttpRequest *)object;
 
@@ -130,7 +123,10 @@ static size_t read_cb(UtObject *object, UtObject *data, bool complete) {
     }
   }
 
-  ut_check_requests_for_unref(object);
+  if (ut_http_message_decoder_get_done(request->message_decoder)) {
+      ut_request_unref(object);
+  }
+
   return n_used;
 }
 
