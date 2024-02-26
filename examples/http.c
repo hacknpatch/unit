@@ -13,6 +13,13 @@ static size_t body_cb(UtObject *object, UtObject *data, bool complete) {
 }
 
 static void response_cb(UtObject *object, UtObject *response) {
+
+  if (ut_object_implements_error(response)) {
+    fprintf(stderr, "%s\n", ut_error_get_description(response));
+    ut_event_loop_return(ut_int32_new(1));
+    return;
+  }
+
   if (ut_http_response_get_status_code(response) != 200) {
     printf("%s\n", ut_http_response_get_reason_phrase(response));
     UtObjectRef return_code = ut_int32_new(1);
