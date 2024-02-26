@@ -527,7 +527,9 @@ UtObject *ut_http_message_decoder_get_body(UtObject *object) {
 
 bool ut_http_message_decoder_get_done(UtObject *object) {
   assert(ut_object_is_http_message_decoder(object));
-  return false;
+  UtHttpMessageDecoder *self = (UtHttpMessageDecoder *)object;
+  return self->state == DECODER_STATE_DONE ||
+         self->state == DECODER_STATE_ERROR;
 }
 
 UtObject *ut_http_message_decoder_get_error(UtObject *object) {
